@@ -102,7 +102,7 @@ class _DashboardState extends State<Dashboard> {
                     SizedBox(
                       height: 10,
                     ),
-                    Text('Patients Testing List'),
+                    Text('Patients Testing Queue'),
                     SizedBox(
                       height: 10,
                     ),
