@@ -160,11 +160,11 @@ class _DashboardState extends State<Dashboard> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  '% transmission rate',
+                                  'Data Timeframe',
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 Text(
-                                  '%',
+                                  'Lifetime',
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ],
@@ -510,6 +510,14 @@ Future<List<Symptoms>> _seeSymptoms(index, BuildContext context) async {
     print('Response status: ${response.statusCode}');
 
     print('Response body: ${response.body}');
+    Fluttertoast.showToast(
+        msg: response.body,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER_RIGHT,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0);
     return List<Symptoms>.from(
         json.decode(response.body).map((x) => Symptoms.fromJson(x)));
   } catch (e) {

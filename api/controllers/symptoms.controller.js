@@ -84,7 +84,7 @@ exports.deleteAll = (req, res)=>{
 
 //find all positive symptoms
 exports.findAllDificulty = (req, res) => {
-  Symptoms.findAll({ where: { difficulty_breathing: 'Yes' } })
+  Symptoms.findAll({ where: { p_id: 1 } })
     .then(data => {
       res.send(data);
     })
