@@ -29,8 +29,8 @@ Symptom.create(symptom)
 
 //retrieve all symptoms
 exports.findAll = (req, res)=> {
-    const id = req.query.id;
-    var condition = id ? { id: { [Op.like]: `%${id}%` } } : null;
+    const p_id = req.query.p_id;
+    var condition = p_id ? { p_id: { [OP.like]: `%${p_id}%` } } : null;
   
     Symptom.findAll({ where: condition })
       .then(data => {

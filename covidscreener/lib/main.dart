@@ -10,7 +10,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      //we route to the dashboard page right away!
       home: Dashboard(),
     );
   }
 }
+
+
+//TO-DO
+/*
+add a nice welcome page here
+*/

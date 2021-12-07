@@ -10,6 +10,9 @@ module.exports = app => {
     // Retrieve all Symptoms
     router.get("/listSymptoms", symptoms.findAll);
 
+    //retrieve all symptoms with condition
+    router.get("/", symptoms.findAll);
+
     //retrieve symptom by id
     router.get("/:id", symptoms.findOne);
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:covidscreener/models/symptomsClass.dart';
+import 'package:covidscreener/views/AddSymptom.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -14,17 +15,17 @@ void main() {
 }
 
 class Dashboard extends StatefulWidget {
-  //const Dashboard({ Key? key }) : super(key: key);
-
   @override
   _DashboardState createState() => _DashboardState();
 }
 
 class _DashboardState extends State<Dashboard> {
+  //initialize objects to be used
   Future<List<Patients>> _patients;
   Future<List<Symptoms>> _symptoms;
   String searchString = "";
 
+  //initializing textediting controllers for our form
   final TextEditingController nameController = new TextEditingController();
   final TextEditingController emailController = new TextEditingController();
   final TextEditingController usernameController = new TextEditingController();
@@ -32,24 +33,19 @@ class _DashboardState extends State<Dashboard> {
   final TextEditingController passwordController = new TextEditingController();
   final TextEditingController dobController = new TextEditingController();
 
+//initializing form key for our form
   final _formkey = GlobalKey<FormState>();
 
+//patients and symptoms class objects to be used to store new objets from API
   Patients _newpatient;
   Symptoms _newsymptoms;
 
+//initializing form inputs
   String name, email, username, phone_number, password, dob;
-  int patient_number, positive_number;
-  double rate;
 
   void initState() {
-    // dobController.text = "";
-
     _patients = _patientsFunction(context);
     _symptoms = _symptomsFunction(context);
-    //patient_number = 1;
-    //positive_number = 1;
-
-    //rate = positive_number / patient_number * 100;
     super.initState();
   }
 
@@ -62,10 +58,8 @@ class _DashboardState extends State<Dashboard> {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 70),
           child: Column(
-            //mainAxisAlignment: MainAxisAlignment.spaceAround,
-            //crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              //row for cards
+              //row for cards on top
               Expanded(
                 child: Column(
                   children: [
@@ -73,6 +67,7 @@ class _DashboardState extends State<Dashboard> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        //card for total patients registered
                         Card(
                           color: Colors.blue,
                           child: Padding(
@@ -112,6 +107,7 @@ class _DashboardState extends State<Dashboard> {
                             ),
                           ),
                         ),
+                        //card for total patients with symptoms
                         Card(
                           color: Colors.blue,
                           child: Padding(
@@ -121,7 +117,7 @@ class _DashboardState extends State<Dashboard> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  '# of Patients Positive',
+                                  '# of Symptomatic Patients',
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 FutureBuilder<List<Symptoms>>(
@@ -151,6 +147,10 @@ class _DashboardState extends State<Dashboard> {
                             ),
                           ),
                         ),
+                        /*
+                        Data timeframe, this is ti say the data is lifetime and
+                         not filtered according to any time frame
+                         */
                         Card(
                           color: Colors.blue,
                           child: Padding(
@@ -176,6 +176,7 @@ class _DashboardState extends State<Dashboard> {
                     SizedBox(
                       height: 20,
                     ),
+                    //this queueu will use FIFO, unlesss age is greater than 59
                     Text(
                       'Patients Testing Queue',
                       style: TextStyle(
@@ -417,6 +418,7 @@ class _DashboardState extends State<Dashboard> {
                     ),
                     Text('Tap on a user to see their sympomts'),
                     Flexible(
+                      //Future builder for the patients list
                       child: new FutureBuilder<List<Patients>>(
                           future: _patients,
                           builder: (context, snapshot) {
@@ -454,18 +456,7 @@ class _DashboardState extends State<Dashboard> {
                                                           .toString()),
                                                     ],
                                                   ),
-                                                  // trailing: TextButton(
-                                                  //     style: ButtonStyle(
-                                                  //       backgroundColor:
-                                                  //           MaterialStateProperty
-                                                  //               .all(Colors
-                                                  //                   .blue),
-                                                  //     ),
-                                                  //     onPressed: () {})
                                                 ),
-
-                                                // ),
-                                                // Text(resources[index].heading)
                                               ],
                                             ),
                                           )
@@ -495,9 +486,15 @@ class _DashboardState extends State<Dashboard> {
 Future<List<Symptoms>> _seeSymptoms(index, BuildContext context) async {
   //parse the link in string with Uri
   var id = index.toString();
+  print(id);
   try {
+    final String _baseUrl = 'localhost:5000';
+    final String _charactersPath = '/api/patients';
+    final Map<String, dynamic> _queryparameters = <String, dynamic>{
+      'p_id': index.toString(),
+    };
     var response = await http.get(
-      Uri.http("localhost:5000", "/api/patients/$id"),
+      Uri.http(_baseUrl, _charactersPath, _queryparameters),
       headers: {
         "Access-Control-Allow-Origin": "*", // Required for CORS support to work
         "Access-Control-Allow-Credentials":
@@ -509,15 +506,35 @@ Future<List<Symptoms>> _seeSymptoms(index, BuildContext context) async {
     );
     print('Response status: ${response.statusCode}');
 
-    print('Response body: ${response.body}');
-    Fluttertoast.showToast(
-        msg: response.body,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER_RIGHT,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0);
+    print('Response body: ${response.body.length}');
+    //easy way to check users without any symptoms
+    if (response.body.length == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AddSymptom(
+                  id: index,
+                )),
+      );
+      Fluttertoast.showToast(
+          msg: 'No symptoms added for this user.',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER_RIGHT,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else {
+      Fluttertoast.showToast(
+          msg: response.body,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER_RIGHT,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+//return Symptoms object f
     return List<Symptoms>.from(
         json.decode(response.body).map((x) => Symptoms.fromJson(x)));
   } catch (e) {
@@ -605,6 +622,7 @@ Future<Patients> _registerPatient(String name, String email, String username,
           "p_password": password,
           "p_dob": "2021-12-06",
         }));
+    //print to inspect response from server
     print('Response status: ${response.statusCode}');
 
     print('Response body: ${response.body}');
@@ -638,38 +656,5 @@ Future<Patients> _registerPatient(String name, String email, String username,
         backgroundColor: Colors.red,
         textColor: Colors.white,
         fontSize: 16.0);
-  }
-}
-
-//method to post symptoms
-_addSymptoms(pId, fever, cough, difficulty_breathing, chills, context) async {
-  //parse the link in string with Uri
-  try {
-    var response = await http.post(
-        Uri.http("localhost:5000", "/api/patients/createSymptom"),
-        headers: {
-          "Access-Control-Allow-Origin":
-              "*", // Required for CORS support to work
-          "Access-Control-Allow-Credentials":
-              'true', // Required for cookies, authorization headers with HTTPS
-          "Access-Control-Allow-Headers":
-              "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
-          "Access-Control-Allow-Methods": "POST, GET, HEAD, OPTIONS"
-        },
-        body: {
-          "pId": json.encode(pId),
-          "fever": json.encode(fever),
-          "cough": json.encode(cough),
-          "difficultyBreathing": json.encode(difficulty_breathing),
-          "chills": json.encode(chills),
-        });
-    print('Response status: ${response.statusCode}');
-
-    print('Response body: ${response.body}');
-    final symptoms = symptomsFromJson(response.body);
-
-    // return symptoms;
-  } catch (e) {
-    print(e.toString());
   }
 }

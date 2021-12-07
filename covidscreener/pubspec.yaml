@@ -23,8 +23,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  #http package for http requests
   http: ^0.13.4
+  #for date format
   intl: ^0.17.0
+  #package for toast notifications
   fluttertoast: ^8.0.8
 
 
@@ -48,8 +51,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  assets:
-    - assets/images/covid19_scanner.png
+  #assets:
+  #  - assets/images/covid19_scanner.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
