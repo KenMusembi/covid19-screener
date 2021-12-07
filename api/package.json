@@ -1,0 +1,23 @@
+{
+  "name": "covid19-screener",
+  "version": "0.0.1",
+  "description": "Screener for Covid19 sysmptoms",
+  "main": "server.js",
+  "author": "Kennedy Musembi",
+  "scripts": {
+    "start": "node server.js",
+    "build": "webpack --config webpack.config.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "pg": "^8.7.1",
+    "sequelize": "^6.12.0-beta.1",
+    "webpack-cli": "^4.9.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15",
+    "webpack": "^5.64.4"
+  },
+  "keywords": [],
+  "license": "ISC"
+}
