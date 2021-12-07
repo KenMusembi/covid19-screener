@@ -22,6 +22,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   Future<List<Patients>> _patients;
+  Future<List<Symptoms>> _symptoms;
   String searchString = "";
 
   final TextEditingController nameController = new TextEditingController();
@@ -34,14 +35,21 @@ class _DashboardState extends State<Dashboard> {
   final _formkey = GlobalKey<FormState>();
 
   Patients _newpatient;
+  Symptoms _newsymptoms;
 
   String name, email, username, phone_number, password, dob;
+  int patient_number, positive_number;
+  double rate;
 
   void initState() {
     // dobController.text = "";
+
     _patients = _patientsFunction(context);
-    _registerPatient(
-        name, email, username, phone_number, password, dob, context);
+    _symptoms = _symptomsFunction(context);
+    //patient_number = 1;
+    //positive_number = 1;
+
+    //rate = positive_number / patient_number * 100;
     super.initState();
   }
 
@@ -52,249 +60,362 @@ class _DashboardState extends State<Dashboard> {
       resizeToAvoidBottomInset: true,
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(15, 10, 15, 70),
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 70),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            //mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               //row for cards
               Expanded(
                 child: Column(
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Card(
-                          child: Column(
-                            children: [
-                              Text('# of Patients registered'),
-                              FutureBuilder<List<Patients>>(
-                                  future: _patients,
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData) {
-                                      var patientNumber = snapshot.data.length;
-                                      return Text(patientNumber.toString());
-                                    } else if (snapshot.hasError) {
-                                      return Text("${snapshot.error}");
-                                    }
+                          color: Colors.blue,
+                          child: Padding(
+                            padding: const EdgeInsets.all(28.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '# of Patients Registered',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                FutureBuilder<List<Patients>>(
+                                    future: _patients,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        var patientNumber =
+                                            snapshot.data.length;
 
-                                    // By default, show a loading spinner.
+                                        return Text(
+                                          patientNumber.toString(),
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        );
+                                      } else if (snapshot.hasError) {
+                                        return Text("${snapshot.error}");
+                                      }
 
-                                    return CircularProgressIndicator();
-                                  }),
-                            ],
+                                      // By default, show a loading spinner.
+
+                                      return CircularProgressIndicator();
+                                    }),
+                              ],
+                            ),
                           ),
                         ),
                         Card(
-                          child: Column(
-                            children: [
-                              Text('# of Patients positive'),
-                              Text('data')
-                            ],
+                          color: Colors.blue,
+                          child: Padding(
+                            padding: const EdgeInsets.all(28.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '# of Patients Positive',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                FutureBuilder<List<Symptoms>>(
+                                    future: _symptoms,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        var positiveNumber =
+                                            snapshot.data.length;
+
+                                        return Text(
+                                          positiveNumber.toString(),
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        );
+                                      } else if (snapshot.hasError) {
+                                        return Text("${snapshot.error}");
+                                      }
+
+                                      // By default, show a loading spinner.
+
+                                      return CircularProgressIndicator();
+                                    }),
+                              ],
+                            ),
                           ),
                         ),
                         Card(
-                          child: Column(
-                            children: [Text('% transmission'), Text('data')],
+                          color: Colors.blue,
+                          child: Padding(
+                            padding: const EdgeInsets.all(28.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '% transmission rate',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                Text(
+                                  '%',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
                     ),
                     SizedBox(
-                      height: 10,
+                      height: 20,
                     ),
-                    Text('Patients Testing Queue'),
+                    Text(
+                      'Patients Testing Queue',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
                     SizedBox(
-                      height: 10,
+                      height: 20,
                     ),
-                    TextButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.blue),
-                      ),
-                      child: Text(
-                        'Register Patient',
-                        style: TextStyle(fontSize: 14.0, color: Colors.white),
-                      ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.blue),
+                        ),
+                        child: Text(
+                          ' Register Patient ',
+                          style: TextStyle(fontSize: 16.0, color: Colors.white),
+                        ),
 
-                      //color: Colors.blueAccent,
-                      //textColor: Colors.white,
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return Dialog(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5.0)),
-                                elevation: 16,
-                                child: Container(
+                        //color: Colors.blueAccent,
+                        //textColor: Colors.white,
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Dialog(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5.0)),
+                                  elevation: 16,
+                                  child: Container(
+                                      child: Padding(
+                                    padding: const EdgeInsets.all(18.0),
                                     child: Column(
-                                  children: [
-                                    Text('Add New Patent'),
-                                    Form(
-                                        key: _formkey,
-                                        child: Column(
-                                          children: <Widget>[
-                                            Text('Patient Name'),
-                                            TextField(
-                                              controller: nameController,
-                                              decoration: InputDecoration(
-                                                  border: OutlineInputBorder(),
-                                                  hintText:
-                                                      'Enter Patient Name'),
-                                              onChanged: (newValue) =>
-                                                  setState(() {
-                                                name = newValue;
-                                              }),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text('Patient Email'),
-                                            TextField(
-                                              controller: emailController,
-                                              decoration: InputDecoration(
-                                                  border: OutlineInputBorder(),
-                                                  hintText:
-                                                      'Enter Patient Email Address'),
-                                              onChanged: (newValue) =>
-                                                  setState(() {
-                                                email = newValue;
-                                              }),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text('Patient Username'),
-                                            TextField(
-                                              controller: usernameController,
-                                              decoration: InputDecoration(
-                                                  border: OutlineInputBorder(),
-                                                  hintText:
-                                                      'Enter Patient Username'),
-                                              onChanged: (newValue) =>
-                                                  setState(() {
-                                                username = newValue;
-                                              }),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text('Patient Phone number'),
-                                            TextField(
-                                              controller: phoneController,
-                                              decoration: InputDecoration(
-                                                  border: OutlineInputBorder(),
-                                                  hintText:
-                                                      'Enter Patient Phone Number'),
-                                              onChanged: (newValue) =>
-                                                  setState(() {
-                                                phone_number = newValue;
-                                              }),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text('Patient Password'),
-                                            TextField(
-                                              obscureText: true,
-                                              enableSuggestions: false,
-                                              autocorrect: false,
-                                              controller: passwordController,
-                                              decoration: InputDecoration(
-                                                  border: OutlineInputBorder(),
-                                                  hintText:
-                                                      'Enter Patient Password'),
-                                              onChanged: (newValue) =>
-                                                  setState(() {
-                                                password = newValue;
-                                              }),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text('Patient Date Of Birth'),
-                                            TextField(
-                                              controller: dobController,
-                                              decoration: InputDecoration(
-                                                  border: OutlineInputBorder(),
-                                                  hintText:
-                                                      'Enter Patient Date of Birth'),
-                                              //readOnly:
-                                              // true, //set it true, so that user will not able to edit text
-                                              onTap: () async {
-                                                DateTime pickedDate =
-                                                    await showDatePicker(
-                                                        context: context,
-                                                        initialDate:
-                                                            DateTime.now(),
-                                                        firstDate: DateTime(
-                                                            2000), //DateTime.now() - not to allow to choose before today.
-                                                        lastDate:
-                                                            DateTime(2101));
+                                      children: [
+                                        Text('Add New Patent'),
+                                        SizedBox(height: 10),
+                                        Form(
+                                            key: _formkey,
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text('Patient Name'),
+                                                SizedBox(
+                                                  height: 7,
+                                                ),
+                                                TextField(
+                                                  controller: nameController,
+                                                  decoration: InputDecoration(
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      hintText:
+                                                          'Enter Patient Name'),
+                                                  onChanged: (newValue) =>
+                                                      setState(() {
+                                                    name = newValue;
+                                                  }),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Text('Patient Email'),
+                                                SizedBox(
+                                                  height: 7,
+                                                ),
+                                                TextField(
+                                                  controller: emailController,
+                                                  decoration: InputDecoration(
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      hintText:
+                                                          'Enter Patient Email Address'),
+                                                  onChanged: (newValue) =>
+                                                      setState(() {
+                                                    email = newValue;
+                                                  }),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Text('Patient Username'),
+                                                SizedBox(
+                                                  height: 7,
+                                                ),
+                                                TextField(
+                                                  controller:
+                                                      usernameController,
+                                                  decoration: InputDecoration(
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      hintText:
+                                                          'Enter Patient Username'),
+                                                  onChanged: (newValue) =>
+                                                      setState(() {
+                                                    username = newValue;
+                                                  }),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Text('Patient Phone number'),
+                                                SizedBox(
+                                                  height: 7,
+                                                ),
+                                                TextField(
+                                                  controller: phoneController,
+                                                  decoration: InputDecoration(
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      hintText:
+                                                          'Enter Patient Phone Number'),
+                                                  onChanged: (newValue) =>
+                                                      setState(() {
+                                                    phone_number = newValue;
+                                                  }),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Text('Patient Password'),
+                                                SizedBox(
+                                                  height: 7,
+                                                ),
+                                                TextField(
+                                                  obscureText: true,
+                                                  enableSuggestions: false,
+                                                  autocorrect: false,
+                                                  controller:
+                                                      passwordController,
+                                                  decoration: InputDecoration(
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      hintText:
+                                                          'Enter Patient Password'),
+                                                  onChanged: (newValue) =>
+                                                      setState(() {
+                                                    password = newValue;
+                                                  }),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Text('Patient Date Of Birth'),
+                                                SizedBox(
+                                                  height: 7,
+                                                ),
+                                                TextField(
+                                                  controller: dobController,
+                                                  decoration: InputDecoration(
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      hintText:
+                                                          'Enter Patient Date of Birth'),
+                                                  //readOnly:
+                                                  // true, //set it true, so that user will not able to edit text
+                                                  onTap: () async {
+                                                    DateTime pickedDate =
+                                                        await showDatePicker(
+                                                            context: context,
+                                                            initialDate:
+                                                                DateTime.now(),
+                                                            firstDate: DateTime(
+                                                                2000), //DateTime.now() - not to allow to choose before today.
+                                                            lastDate:
+                                                                DateTime(2101));
 
-                                                if (pickedDate != null) {
-                                                  print(
-                                                      pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-                                                  String formattedDate =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(pickedDate);
-                                                  print(
-                                                      formattedDate); //formatted date output using intl package =>  2021-03-16
-                                                  //you can implement different kind of Date Format here according to your requirement
+                                                    if (pickedDate != null) {
+                                                      print(
+                                                          pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                                                      String formattedDate =
+                                                          DateFormat(
+                                                                  'yyyy-MM-dd')
+                                                              .format(
+                                                                  pickedDate);
+                                                      print(
+                                                          formattedDate); //formatted date output using intl package =>  2021-03-16
+                                                      //you can implement different kind of Date Format here according to your requirement
 
-                                                  setState(() {
-                                                    dobController.text =
-                                                        formattedDate; //set output date to TextField value.
-                                                  });
-                                                } else {
-                                                  print("Date is not selected");
-                                                }
-                                              },
-                                              onChanged: (newValue) =>
-                                                  setState(() {
-                                                dob = newValue;
-                                              }),
-                                            ),
-                                            SizedBox(height: 10.0),
-                                            FloatingActionButton.extended(
-                                              label: Text('Submit'),
-                                              onPressed: () async {
-                                                final name = nameController.text
-                                                    .toString();
-                                                final email =
-                                                    emailController.text;
-                                                final username =
-                                                    usernameController.text;
-                                                final phone_number =
-                                                    phoneController.text;
-                                                final password =
-                                                    passwordController.text;
-                                                final dob = dobController.text
-                                                    .toString();
-                                                final Patients patient =
-                                                    await _registerPatient(
-                                                        name,
-                                                        email,
-                                                        username,
-                                                        phone_number,
-                                                        password,
-                                                        dob,
-                                                        context);
-                                                setState(() {
-                                                  _newpatient = patient;
-                                                });
-                                              },
-                                              tooltip: "Submit Follow Up Data",
-                                              //icon: Icon(Icons.add)
-                                            ),
-                                            SizedBox(height: 10.0),
-                                          ],
-                                        )),
-                                  ],
-                                )),
-                              );
-                            });
-                      },
+                                                      setState(() {
+                                                        dobController.text =
+                                                            formattedDate; //set output date to TextField value.
+                                                      });
+                                                    } else {
+                                                      print(
+                                                          "Date is not selected");
+                                                    }
+                                                  },
+                                                  onChanged: (newValue) =>
+                                                      setState(() {
+                                                    dob = newValue;
+                                                  }),
+                                                ),
+                                                SizedBox(height: 20.0),
+                                                FloatingActionButton.extended(
+                                                  label: Text('Submit'),
+                                                  onPressed: () async {
+                                                    final name = nameController
+                                                        .text
+                                                        .toString();
+                                                    final email =
+                                                        emailController.text;
+                                                    final username =
+                                                        usernameController.text;
+                                                    final phone_number =
+                                                        phoneController.text;
+                                                    final password =
+                                                        passwordController.text;
+                                                    final dob = dobController
+                                                        .text
+                                                        .toString();
+                                                    final Patients patient =
+                                                        await _registerPatient(
+                                                            name,
+                                                            email,
+                                                            username,
+                                                            phone_number,
+                                                            password,
+                                                            dob,
+                                                            context);
+                                                    setState(() {
+                                                      _newpatient = patient;
+                                                    });
+                                                  },
+                                                  tooltip:
+                                                      "Submit Follow Up Data",
+                                                  //icon: Icon(Icons.add)
+                                                ),
+                                                SizedBox(height: 10.0),
+                                              ],
+                                            )),
+                                      ],
+                                    ),
+                                  )),
+                                );
+                              });
+                        },
+                      ),
                     ),
+                    Text('Tap on a user to see their sympomts'),
                     Flexible(
                       child: new FutureBuilder<List<Patients>>(
                           future: _patients,
@@ -315,22 +436,32 @@ class _DashboardState extends State<Dashboard> {
                                                   enabled: true,
                                                   //  isThreeLine: true,
                                                   onTap: () {
-                                                    //updateTime(
-                                                    //     index, allPatients);
+                                                    (_seeSymptoms(
+                                                        allPatients[index].id,
+                                                        context));
                                                   },
-
                                                   title: Text(allPatients[index]
                                                       .pName
                                                       .toString()),
-                                                  subtitle: Text(
-                                                      allPatients[index]
-                                                          .pUsername
+                                                  subtitle: Row(
+                                                    children: [
+                                                      Text(allPatients[index]
+                                                              .pUsername
+                                                              .toString() +
+                                                          '\t'),
+                                                      Text(allPatients[index]
+                                                          .pEmail
                                                           .toString()),
-                                                  trailing: IconButton(
-                                                    icon:
-                                                        Icon(Icons.view_array),
-                                                    onPressed: () {},
+                                                    ],
                                                   ),
+                                                  // trailing: TextButton(
+                                                  //     style: ButtonStyle(
+                                                  //       backgroundColor:
+                                                  //           MaterialStateProperty
+                                                  //               .all(Colors
+                                                  //                   .blue),
+                                                  //     ),
+                                                  //     onPressed: () {})
                                                 ),
 
                                                 // ),
@@ -361,6 +492,32 @@ class _DashboardState extends State<Dashboard> {
 }
 
 //future method to fetch patients registered
+Future<List<Symptoms>> _seeSymptoms(index, BuildContext context) async {
+  //parse the link in string with Uri
+  var id = index.toString();
+  try {
+    var response = await http.get(
+      Uri.http("localhost:5000", "/api/patients/$id"),
+      headers: {
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+        "Access-Control-Allow-Credentials":
+            'true', // Required for cookies, authorization headers with HTTPS
+        "Access-Control-Allow-Headers":
+            "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+        "Access-Control-Allow-Methods": "POST, GET, HEAD, OPTIONS"
+      },
+    );
+    print('Response status: ${response.statusCode}');
+
+    print('Response body: ${response.body}');
+    return List<Symptoms>.from(
+        json.decode(response.body).map((x) => Symptoms.fromJson(x)));
+  } catch (e) {
+    print(e.toString());
+  }
+}
+
+//future method to fetch patients registered
 Future<List<Patients>> _patientsFunction(context) async {
   //parse the link in string with Uri
 
@@ -386,12 +543,37 @@ Future<List<Patients>> _patientsFunction(context) async {
   }
 }
 
+//future method to fetch symptoms data
+Future<List<Symptoms>> _symptomsFunction(context) async {
+  //parse the link in string with Uri
+
+  try {
+    var response = await http.get(
+      Uri.http("localhost:5000", "/api/patients/listSymptoms"),
+      headers: {
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+        "Access-Control-Allow-Credentials":
+            'true', // Required for cookies, authorization headers with HTTPS
+        "Access-Control-Allow-Headers":
+            "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+        "Access-Control-Allow-Methods": "POST, GET, HEAD, OPTIONS"
+      },
+    );
+    print('Response status: ${response.statusCode}');
+
+    print('Response body: ${response.body}');
+    return List<Symptoms>.from(
+        json.decode(response.body).map((x) => Symptoms.fromJson(x)));
+  } catch (e) {
+    print(e.toString());
+  }
+}
+
 //method to post patients
 Future<Patients> _registerPatient(String name, String email, String username,
     String phone_number, String password, String dob, context) async {
   //parse the link in string with Uri
   print(' email' + email.toString() + json.encode(username).toString());
-  String dob = '1980-12-07';
   try {
     final response = await http.post(
         Uri.http("localhost:5000", "/api/patients/createPatient"),

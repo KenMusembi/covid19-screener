@@ -29,7 +29,7 @@ class Patients {
   String pUsername;
   String pPhoneNumber;
   String pPassword;
-  DateTime pDob;
+  String pDob;
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -40,7 +40,7 @@ class Patients {
         pUsername: json["p_username"],
         pPhoneNumber: json["p_phone_number"],
         pPassword: json["p_password"],
-        pDob: DateTime.parse(json["p_dob"]),
+        pDob: (json["p_dob"]),
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
       );
@@ -52,8 +52,7 @@ class Patients {
         "p_username": pUsername,
         "p_phone_number": pPhoneNumber,
         "p_password": pPassword,
-        "p_dob":
-            "${pDob.year.toString().padLeft(4, '0')}-${pDob.month.toString().padLeft(2, '0')}-${pDob.day.toString().padLeft(2, '0')}",
+        "p_dob": pDob,
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
       };

@@ -9,6 +9,12 @@ module.exports = app => {
   
     // Retrieve all Symptoms
     router.get("/listSymptoms", symptoms.findAll);
+
+    //retrieve symptom by id
+    router.get("/:id", symptoms.findOne);
+
+    //retieve symptoms where there is difficulty breathing
+    router.get("/difficulty", symptoms.findAllDificulty);
   
     app.use('/api/patients', router);
   };

@@ -29,8 +29,8 @@ Symptom.create(symptom)
 
 //retrieve all symptoms
 exports.findAll = (req, res)=> {
-    const p_id = req.query.p_id;
-    var condition = p_id ? { p_id: { [Op.like]: `%${p_id}%` } } : null;
+    const id = req.query.id;
+    var condition = id ? { id: { [Op.like]: `%${id}%` } } : null;
   
     Symptom.findAll({ where: condition })
       .then(data => {
@@ -48,7 +48,23 @@ exports.findAll = (req, res)=> {
 //TO-DO
 //find a single syptom with id
 exports.findOne = (req, res) => {
+  const id = req.params.id;
 
+  Symptom.findByPk(id)
+    .then(data => {
+      if (data) {
+        res.send(data);
+      } else {
+        res.status(404).send({
+          message: `Cannot find Symptom with id=${id}.`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error retrieving Symptom with id=" + id
+      });
+    });
 };
 
 //update symptom details by the id in the request
@@ -67,6 +83,15 @@ exports.deleteAll = (req, res)=>{
 };
 
 //find all positive symptoms
-exports.findAllPositive = (req, res)=> {
-
+exports.findAllDificulty = (req, res) => {
+  Symptoms.findAll({ where: { difficulty_breathing: 'Yes' } })
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving symptoms."
+      });
+    });
 };
