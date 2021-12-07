@@ -27,8 +27,8 @@
             
         },
         p_dob: {
-          type: Sequelize.DATE(191),
-          allowNull: false
+          type: Sequelize.STRING(191),
+          allowNull: true
           
       },
         
