@@ -7,6 +7,10 @@ const app = express()
 //parse requests of content-type - application/json
 app.use(express.json());
 
+//to communicate with the flutter server
+const cors = require("cors");
+app.use(cors());
+
 //reference models and sync any changes
 const db = require("./models");
 db.sequelize.sync();
